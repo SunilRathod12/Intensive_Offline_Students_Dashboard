@@ -1,0 +1,15 @@
+{
+  "name": "student-dashboard",
+  "version": "1.0.0",
+  "description": "This project implements a static, production-ready Student Performance Dashboard system. It features a main dashboard displaying all students with search, filter, and sort capabilities, and individual student profile pages with detailed assessment data, charts, and trend analysis.",
+  "main": "generate.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "papaparse": "^5.5.3"
+  }
+}
