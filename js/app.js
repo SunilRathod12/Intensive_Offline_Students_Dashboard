@@ -10,6 +10,17 @@ class StudentDashboard {
 
   async init() {
     try {
+      // Check authentication for dashboard (not for student pages)
+      if (document.getElementById('dashboard-content') && typeof AuthManager !== 'undefined') {
+        if (!AuthManager.isAuthenticated()) {
+          return; // Don't load data, admin.js will handle login
+        }
+        // Show loading skeleton while loading
+        if (document.getElementById('loading-skeleton')) {
+          document.getElementById('loading-skeleton').style.display = 'block';
+        }
+      }
+
       await this.loadCSV();
       this.students = DataUtils.calculateRankings(this.students); // Calculate rankings after loading data
       if (document.getElementById('dashboard-content')) {
@@ -20,15 +31,24 @@ class StudentDashboard {
       }
     } catch (error) {
       console.error('Error initializing dashboard:', error);
+      if (document.getElementById('loading-skeleton')) {
+        document.getElementById('loading-skeleton').style.display = 'none';
+      }
     }
   }
 
   async loadCSV() {
     try {
+      // Check for uploaded CSV in localStorage first
+      const uploadedCSV = localStorage.getItem('csv_data');
+      if (uploadedCSV && document.getElementById('dashboard-content')) {
+        this.parseExamsFromCSV(uploadedCSV);
+        return;
+      }
+
       const response = await fetch(document.getElementById('dashboard-content') ? 'data.csv' : '../data.csv'); // Adjusted path for student pages
       const csv = await response.text();
-      const parsed = Papa.parse(csv, { header: false }).data; // Changed to false to handle multi-line header
-      this.parseExams(parsed);
+      this.parseExamsFromCSV(csv);
     } catch (error) {
       console.error('Error loading CSV:', error);
       // Hide loading skeleton even on error
@@ -40,6 +60,17 @@ class StudentDashboard {
         document.getElementById('student-cards').innerHTML = '<div class="col-12"><p class="text-danger">Error loading data. Please check the console.</p></div>';
       }
     }
+  }
+
+  loadCSVFromString(csvString) {
+    localStorage.setItem('csv_data', csvString);
+    this.parseExamsFromCSV(csvString);
+    return Promise.resolve();
+  }
+
+  parseExamsFromCSV(csvString) {
+    const parsed = Papa.parse(csvString, { header: false }).data;
+    this.parseExams(parsed);
   }
 
   parseExams(data) {
@@ -252,18 +283,22 @@ class StudentDashboard {
         row.innerHTML = `
             <td>${exam.week}</td>
             <td class="${typeColorClass}">${exam.type === 'weekly' ? '🟢 Weekly' : '🟣 Fortnight'}</td>
+            <td>${exam.comm}</td>
             <td>${exam.mcq}</td>
             <td>${exam.coding}</td>
             <td>${exam.assignment}</td>
             <td>${exam.visual}</td>
             <td>${exam.overall}</td>
-            <td>${exam.comm}</td>
         `;
         tableBody.appendChild(row);
     });
   }
 }
 
+// Initialize dashboard only if authenticated or on student pages
 document.addEventListener('DOMContentLoaded', () => {
-    const studentDashboard = new StudentDashboard();
+    // Only initialize if on student page or if authenticated
+    if (!document.getElementById('dashboard-content') || (typeof AuthManager !== 'undefined' && AuthManager.isAuthenticated())) {
+        window.studentDashboard = new StudentDashboard();
+    }
 });

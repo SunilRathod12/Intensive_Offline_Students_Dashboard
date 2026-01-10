@@ -29,8 +29,14 @@ const generateStudentTemplate = (studentData) => {
         </div>
 
         <div class="charts-section mb-4">
-            <canvas id="overallScoreChart"></canvas>
-            <canvas id="communicationRatingChart"></canvas>
+            <div class="chart-container">
+                <div class="chart-title">📊 Overall Score Performance</div>
+                <canvas id="overallScoreChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">💬 Communication Rating Trend</div>
+                <canvas id="communicationRatingChart"></canvas>
+            </div>
         </div>
 
         <div class="detailed-table mb-4">
@@ -39,12 +45,12 @@ const generateStudentTemplate = (studentData) => {
                     <tr>
                         <th>Week</th>
                         <th>Type</th>
+                        <th>Communication</th>
                         <th>MCQ</th>
                         <th>Coding</th>
-                        <th>Assign</th>
+                        <th>Assignment</th>
                         <th>Visual</th>
                         <th>Overall</th>
-                        <th>Communication</th>
                     </tr>
                 </thead>
                 <tbody id="student-exams-table-body">
@@ -65,9 +71,6 @@ const generateStudentTemplate = (studentData) => {
             <p id="student-trend"></p>
         </div>
 
-        <div class="text-center">
-            <a href="../index.html" class="btn btn-info">⬅️ Back to Dashboard</a>
-        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
