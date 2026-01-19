@@ -20,14 +20,17 @@ const renderCharts = (exams) => {
   // Destroy existing chart instances if they exist
   if (overallScoreChartInstance) {
     overallScoreChartInstance.destroy();
+    overallScoreChartInstance = null;
   }
   if (communicationRatingChartInstance) {
     communicationRatingChartInstance.destroy();
+    communicationRatingChartInstance = null;
   }
 
   // Overall Score Chart
-  const overallScoreCtx = document.getElementById('overallScoreChart');
-  if (overallScoreCtx) {
+  const overallScoreCanvas = document.getElementById('overallScoreChart');
+  if (overallScoreCanvas) {
+    const overallScoreCtx = overallScoreCanvas.getContext('2d');
     overallScoreChartInstance = new Chart(overallScoreCtx, {
       type: 'bar',
       data: {
@@ -66,8 +69,9 @@ const renderCharts = (exams) => {
   }
 
   // Communication Rating Chart
-  const communicationRatingCtx = document.getElementById('communicationRatingChart');
-  if (communicationRatingCtx) {
+  const communicationRatingCanvas = document.getElementById('communicationRatingChart');
+  if (communicationRatingCanvas) {
+    const communicationRatingCtx = communicationRatingCanvas.getContext('2d');
     communicationRatingChartInstance = new Chart(communicationRatingCtx, {
       type: 'line',
       data: {

@@ -255,12 +255,22 @@ class StudentDashboard {
         const examTypeTabs = document.querySelectorAll('.exam-type-tabs .btn');
         examTypeTabs.forEach(tab => {
             tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                const clickedTab = e.currentTarget;
                 examTypeTabs.forEach(t => t.classList.remove('active', 'btn-success', 'btn-primary', 'btn-secondary'));
-                const type = e.target.dataset.examType;
-                if (type === 'weekly') e.target.classList.add('btn-success', 'active');
-                else if (type === 'fortnight') e.target.classList.add('btn-secondary', 'active');
-                else e.target.classList.add('btn-primary', 'active');
+                const type = clickedTab.dataset.examType;
+                console.log('Tab clicked, exam type:', type);
+                
+                if (type === 'weekly') clickedTab.classList.add('btn-success', 'active');
+                else if (type === 'fortnight') clickedTab.classList.add('btn-secondary', 'active');
+                else clickedTab.classList.add('btn-primary', 'active');
+                
                 this.renderStudentExamsTable(student, type);
+                
+                // Update charts based on filtered exam type
+                const filteredExams = type === 'all' ? student.exams : student.exams.filter(exam => exam.type === type);
+                console.log('Filtered exams for charts:', filteredExams);
+                renderCharts(filteredExams);
             });
         });
 
