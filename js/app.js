@@ -218,6 +218,7 @@ class StudentDashboard {
         const bestOverall = DataUtils.calculateOverallBest(student);
         const trend = DataUtils.analyzeTrend(student);
         const trendIcon = trend === 'Improving' ? '📈' : trend === 'Declining' ? '📉' : '➡️';
+        const studentSlug = student.Name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
         
         studentCard.innerHTML = `
             <div class="card h-100">
@@ -227,7 +228,7 @@ class StudentDashboard {
                     <p class="card-text"><span class="score-pill fortnight">Fortnight</span> ${fortnightScores.join(' • ') || 'N/A'}</p>
                     <p class="card-text"><strong>Best Score:</strong> ${bestOverall}/180 &nbsp;${trendIcon} ${trend}</p>
                     <p class="card-text">📱 ${student.Mobile}</p>
-                    <a href="students/student-${student.Name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-')}.html" class="btn btn-primary btn-sm mt-2">View Profile →</a>
+                    <a href="students/student-${studentSlug}.html" class="btn btn-primary btn-sm mt-2">View Profile →</a>
                 </div>
             </div>
         `;

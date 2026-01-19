@@ -7,7 +7,7 @@ class AuthManager {
   static isAuthenticated() {
     const authData = localStorage.getItem(this.STORAGE_KEY);
     if (!authData) return false;
-    
+
     try {
       const { timestamp } = JSON.parse(authData);
       const now = Date.now();
@@ -22,13 +22,16 @@ class AuthManager {
   }
 
   static login(password) {
+    console.log('Attempting login with password length:', password.length);
     if (password === this.ADMIN_PASSWORD) {
+      console.log('Login successful');
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify({
         authenticated: true,
         timestamp: Date.now()
       }));
       return true;
     }
+    console.log('Login failed: Incorrect password');
     return false;
   }
 

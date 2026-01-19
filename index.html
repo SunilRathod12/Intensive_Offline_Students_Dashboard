@@ -50,12 +50,12 @@
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Upload CSV</h5>
-                        <p class="card-text text-muted">Upload a new CSV file to update student data</p>
+                        <p class="card-text text-muted">Upload a new CSV file to update student data. Old student files will be deleted and new ones generated.</p>
                         <div class="mb-3">
                             <input type="file" id="csv-file-input" class="form-control" accept=".csv" />
                         </div>
                         <button id="upload-csv-btn" class="btn btn-success" disabled>
-                            <span id="upload-btn-text">Upload</span>
+                            <span id="upload-btn-text">Upload & Regenerate</span>
                             <span id="upload-btn-loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
                         </button>
                         <div id="upload-status" class="mt-2"></div>
