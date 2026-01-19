@@ -99,8 +99,8 @@ class StudentDashboard {
           }
       }
 
-      // Each week block has 8 columns: MCQs, Coding, Assignment, Visual%, Overall, Fortnight(label), Weekly(label), Comm Rating
-      // Data columns are at: startCol (MCQ), startCol+1 (Coding), startCol+2 (Assignment), startCol+3 (Visual), startCol+4 (Overall), startCol+7 (Comm)
+      // Each week block has 6 columns: Comm Rating, MCQs, Coding, Assignment, Visual%, Overall
+      // Data columns are at: startCol (Comm), startCol+1 (MCQ), startCol+2 (Coding), startCol+3 (Assignment), startCol+4 (Visual), startCol+5 (Overall)
       weekPositions.forEach(weekInfo => {
           examColumnInfo.push({
               type: weekInfo.type,
@@ -124,19 +124,20 @@ class StudentDashboard {
               exam.week = examInfo.week;
               
               // Handle NOT_ATTEMPTED values
-              const mcqVal = row[examInfo.startDataCol];
-              const codingVal = row[examInfo.startDataCol + 1];
-              const assignVal = row[examInfo.startDataCol + 2];
-              const visualVal = row[examInfo.startDataCol + 3];
-              const overallVal = row[examInfo.startDataCol + 4];
-              const commVal = row[examInfo.startDataCol + 7];
+              // CSV order: Comm Rating, MCQs, Coding, Assignment, Visual%, Overall
+              const commVal = row[examInfo.startDataCol];
+              const mcqVal = row[examInfo.startDataCol + 1];
+              const codingVal = row[examInfo.startDataCol + 2];
+              const assignVal = row[examInfo.startDataCol + 3];
+              const visualVal = row[examInfo.startDataCol + 4];
+              const overallVal = row[examInfo.startDataCol + 5];
               
+              exam.comm = (commVal && commVal !== 'NOT_ATTEMPTED') ? parseInt(commVal) || 0 : 0;
               exam.mcq = (mcqVal && mcqVal !== 'NOT_ATTEMPTED') ? parseInt(mcqVal) || 0 : 0;
               exam.coding = (codingVal && codingVal !== 'NOT_ATTEMPTED') ? parseInt(codingVal) || 0 : 0;
               exam.assignment = (assignVal && assignVal !== 'NOT_ATTEMPTED') ? parseInt(assignVal) || 0 : 0;
               exam.visual = (visualVal && visualVal !== 'NOT_ATTEMPTED') ? parseInt(visualVal) || 0 : 0;
               exam.overall = (overallVal && overallVal !== 'NOT_ATTEMPTED') ? parseInt(overallVal) || 0 : 0;
-              exam.comm = (commVal && commVal !== 'NOT_ATTEMPTED') ? parseInt(commVal) || 0 : 0;
               
               student.exams.push(exam);
           });
@@ -211,16 +212,22 @@ class StudentDashboard {
     studentsToRender.forEach(student => {
         const studentCard = document.createElement('div');
         studentCard.classList.add('col-12', 'col-md-6', 'col-lg-4', 'mb-4');
+        
+        const weeklyScores = student.exams.filter(e => e.type === 'weekly').map(e => e.overall);
+        const fortnightScores = student.exams.filter(e => e.type === 'fortnight').map(e => e.overall);
+        const bestOverall = DataUtils.calculateOverallBest(student);
+        const trend = DataUtils.analyzeTrend(student);
+        const trendIcon = trend === 'Improving' ? '📈' : trend === 'Declining' ? '📉' : '➡️';
+        
         studentCard.innerHTML = `
-            <div class="card h-100 shadow-sm">
+            <div class="card h-100">
                 <div class="card-body">
-                    <h5 class="card-title">${student.Name} (Rank #${student.rank})</h5>
-                    <p class="card-text">🟢 Weekly: ${student.exams.filter(e => e.type === 'weekly').map(e => `${e.overall} (${e.week})`).join(' | ')}</p>
-                    <p class="card-text">🟣 Fortnight: ${student.exams.filter(e => e.type === 'fortnight').map(e => `${e.overall} (${e.week})`).join(' | ')}</p>
-                    <p class="card-text">📊 Overall Best: ${DataUtils.calculateOverallBest(student)}</p>
-                    <p class="card-text">📱 ${student.Mobile} | ✉ ${student.Email}</p>
-                    <p class="card-text">📈 "${DataUtils.analyzeTrend(student)}"</p>
-                    <a href="students/student-${student.Name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-')}.html" class="btn btn-primary btn-sm mt-2">👤 VIEW PROFILE</a>
+                    <h5 class="card-title">${student.Name} <span class="rank-badge">#${student.rank}</span></h5>
+                    <p class="card-text"><span class="score-pill weekly">Weekly</span> ${weeklyScores.join(' • ') || 'N/A'}</p>
+                    <p class="card-text"><span class="score-pill fortnight">Fortnight</span> ${fortnightScores.join(' • ') || 'N/A'}</p>
+                    <p class="card-text"><strong>Best Score:</strong> ${bestOverall}/180 &nbsp;${trendIcon} ${trend}</p>
+                    <p class="card-text">📱 ${student.Mobile}</p>
+                    <a href="students/student-${student.Name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-')}.html" class="btn btn-primary btn-sm mt-2">View Profile →</a>
                 </div>
             </div>
         `;
